@@ -1,0 +1,6 @@
+export const CREATE_USER = "CREATE USER"
+export const CREATE_LIST = "CREATE LIST"
+export const UPDATE_USER = "UPDATE USER"
+export const UPDATE_LIST = "UPDATE LIST"
+export const DELETE_USER = "DELETE USER"
+export const DELETE_LIST = "DELETE LIST"

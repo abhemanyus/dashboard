@@ -14,19 +14,19 @@ function App() {
   const [UserState, dispatch] = useReducer(UserReducer, defaultState)
   return (
     <BrowserRouter>
-      <Layout>
-        <UserContext.Provider value={{ UserState, dispatch }}>
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/:uid'>
+      <UserContext.Provider value={{ UserState, dispatch }}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path='/user/:uid'>
               <Route index element={<Warn />} />
               <Route path='detail' element={<Detail />} />
               <Route path='update' element={<Update />} />
             </Route>
             <Route path='*' element={<NotFound />} />
-          </Routes>
-        </UserContext.Provider>
-      </Layout>
+          </Route>
+        </Routes>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 }

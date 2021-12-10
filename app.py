@@ -71,7 +71,9 @@ def createUser():
 def handleUser(uid):
     try:
         user = User.query.get(uid)
-    except KeyError:
+        if user is None:
+            raise ValueError("Invalid id")
+    except (TypeError, ValueError):
         return jsonify({})
 
     if request.method == 'PUT':
@@ -91,7 +93,7 @@ def handleUser(uid):
     if request.method == 'DELETE':
         try:
             db.session.remove(user)
-        except exc.InternalError:
+        except TypeError:
             db.session.rollback()
 
     return jsonify(parseUsers(user))

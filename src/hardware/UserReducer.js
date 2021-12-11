@@ -1,5 +1,4 @@
 import * as Action from './UserActions.js'
-import * as API from './ApiInterface.js'
 
 export const defaultState = {
     Users: [],
@@ -7,87 +6,87 @@ export const defaultState = {
     Timestamp: new Date(0)
 }
 
-export const UserReducer = async (state, action) => {
+export const UserReducer = (state, action) => {
     switch(action.type) {
         case Action.CREATE_LIST: {
             // Create timestamp for further requests
             const timestamp = new Date()
             // Get full list from API
-            const users = await API.getList() 
+            const users = action.data 
             // Count users
             const count = users.length
             console.info("List with " + count + " Entries Created")
             return {Users: users, Count: count, Timestamp: timestamp}
         }
 
-        case Action.CREATE_USER: {
-            // Send user data to server, receive created user
-            const user = await API.createUser(action.data)
-            // Terminate if user not returned
-            if (!user) return state
-            console.info("User " + user._id + " Created")
-            return {...state, Users: [...state.Users, user]}
-        }
+        // case Action.CREATE_USER: {
+        //     // Send user data to server, receive created user
+        //     const user = await API.createUser(action.data)
+        //     // Terminate if user not returned
+        //     if (!user) return state
+        //     console.info("User " + user.id + " Created")
+        //     return {...state, Users: [...state.Users, user]}
+        // }
 
         case Action.UPDATE_LIST: {
             const timestamp = new Date()
             // Get list of changes from last timestamp
-            const listChanges = await API.updateList(state.Timestamp)
+            const listChanges = action.data
             // Create copy of old users for merging
             const oldUsers = [...state.Users]
+            const newUsers = []
             // merge lists if changes are present
-            const updatedLength = listChanges.length
-            if (listChanges) {
-                const tmpLength = listChanges.length
-                for (let i = 0; i < tmpLength; i++) {
-                    oldUsers.forEach((user, index) => {
-                        if (user._id == listChanges[i]._id) {
-                            oldUsers[index] = listChanges[i]
-                            delete listChanges[i]
-                        }
-                    })
+            listChanges.forEach(user => {
+                const olusr = oldUsers.find(usr => usr.id == user.id)
+                if (olusr) {
+                    olusr.name = user.name
+                    olusr.email = user.email
                 }
-            }
+                else {
+                    newUsers.push(user)
+                }
+            })
             // Append the rest of the changes to Users and return it all
-            const users = [...oldUsers, ...listChanges]
-            const count = oldUsers.length + listChanges.length
-            console.log("Updated " + updatedLength + " Entries")
+            const users = [...oldUsers, ...newUsers]
+            const count = users.length
+            console.log("Updated " + newUsers.length + " Entries")
             return {Users: users, Count: count, Timestamp: timestamp}
         }
 
         case Action.UPDATE_USER: {
             // Send update request to server and receive updated user
-            const data = await API.updateUser(action.data._id, action.data)
+            const data = action.data
             // if unsuccessful, return state and terminate
             if (!data) return state
             // Duplicate Users for merging
             const oldUsers = state.Users
             // Find old user entry and update
-            oldUsers.map(user => {
-                if (user._id == data._id) return data
-                return user
-            })
-            console.info("User " + data._id + " Updated")
+            const user = oldUsers.findIndex(usr => usr.id == data.id)
+            oldUsers[user] = data
+
+            console.info("User " + data.id + " Updated")
             return {...state, Users: oldUsers}
         }
 
         case Action.DELETE_USER: {
-            const data = await API.deleteUser(action.data)
+            const data = action.data
             if (!data) return state
             // Duplicate Users for merging
             const oldUsers = state.Users
             // Filter out deleted user
-            const newUsers = oldUsers.filter(user => user._id !== data._id)
-            console.info("User " + data._id + " Deleted")
+            const newUsers = oldUsers.filter(user => user.id !== data.id)
+            console.info("User " + data.id + " Deleted")
             return {...state, Users: newUsers}
         }
 
-        case Action.DELETE_LIST: {
-            const timestamp = new Date()
-            const data = await API.deleteList()
-            if (!data) return state
-            console.info("List Deleted")
-            return {...state, Users: {}, Timestamp: timestamp}
-        }
+        // case Action.DELETE_LIST: {
+        //     const timestamp = new Date()
+        //     const data = await API.deleteList()
+        //     if (!data) return state
+        //     console.info("List Deleted")
+        //     return {...state, Users: {}, Timestamp: timestamp}
+        // }
+
+        default: return state
     }
 }

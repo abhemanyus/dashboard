@@ -7,11 +7,13 @@ import Update from './page/Update';
 import NotFound from './page/404';
 import { UserReducer, defaultState } from './hardware/UserReducer.js';
 import Warn from './page/Warn';
+import { useUpdater } from './hardware/CustomHooks';
 
 export const UserContext = createContext()
 
 function App() {
   const [UserState, dispatch] = useReducer(UserReducer, defaultState)
+  useUpdater(dispatch)
   return (
     <BrowserRouter>
       <UserContext.Provider value={{ UserState, dispatch }}>

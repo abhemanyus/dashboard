@@ -29,12 +29,13 @@ export const getUser = async (user_id) => {
 }
 
 // Update a user with provided parameters, and return new user if successful, or empty dict if not
-export const updateUser = async (user_id, params) => {
+export const updateUser = async (user) => {
     try {
         // PUT-request to <BASE_URL>/user/<user_id>
-        const res = await fetch(BASE_URL + 'user/' + user_id, {
+        const res = await fetch(BASE_URL + 'user/' + user.id, {
             method: 'PUT',
-            body: JSON.stringify(params)
+            body: JSON.stringify(user),
+            headers: {'content-type': 'application/json'}
         })
         if (res.status !== 200) throw new Error('Request not successful')
         const data = await res.json()
@@ -97,7 +98,8 @@ export const createUser = async (user) => {
     try {
         const res = await fetch(BASE_URL + 'user', {
             method: 'POST',
-            body: JSON.stringify(user)
+            body: JSON.stringify(user),
+            headers: {'content-type': 'application/json'}
         })
         const data = await res.json()
         return data

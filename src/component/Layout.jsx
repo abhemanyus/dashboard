@@ -1,14 +1,14 @@
 import React, {memo} from 'react'
-import Navbar from './Navbar'
-import Footer from './Footer'
+// import Navbar from './Navbar'
+// import Footer from './Footer'
 import { Outlet } from 'react-router'
 
 function Layout() {
     return (
         <main>
-            <Navbar/>
+            {/* <Navbar/> */}
             <Outlet/>
-            <Footer/>
+            {/* <Footer/> */}
         </main>
     )
 }

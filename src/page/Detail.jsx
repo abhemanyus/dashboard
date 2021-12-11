@@ -7,15 +7,17 @@ function Detail() {
     useTitle("Detail")
     const {uid} = useParams()
     const {UserState} = useContext(UserContext)
-    const user = UserState.Users.find(user => user._id === uid)
+    const user = UserState.Users.find(user => user.id === parseInt(uid))
     if (user) return (
-        <div>
-            <h1>User ID {uid}</h1>
+        <div className="p-4 m-4 text-center">
+            <h1 className="font-bold">User ID: {user.id}</h1>
+            <h2>User name: {user.name}</h2>
+            <h2>User email: {user.email}</h2>
         </div>
     )
     return (
-        <div>
-            <h1>User not found!</h1>
+        <div className="p-4 m-4 text-center">
+            <h1 className="text-red-700">User not found!</h1>
         </div>
     )
 }
